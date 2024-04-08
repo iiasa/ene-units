@@ -1,6 +1,6 @@
 Unit definitions for integrated-assessment research
 ***************************************************
-|pypi| |gha|
+|pypi| |gha| |coverage|
 
 .. |pypi| image:: https://img.shields.io/pypi/v/iam-units.svg
    :target: https://pypi.python.org/pypi/iam-units/
@@ -9,6 +9,10 @@ Unit definitions for integrated-assessment research
 .. |gha| image:: https://github.com/IAMconsortium/units/actions/workflows/test.yaml/badge.svg
    :target: https://github.com/IAMconsortium/units/actions/workflows/test.yaml
    :alt: Build status
+
+.. |coverage| image:: https://codecov.io/gh/IAMconsortium/units/graph/badge.svg?token=L0H171CF9O
+   :target: https://codecov.io/gh/IAMconsortium/units
+   :alt: Test coverage
 
 © 2020–2024 `IAM-units authors`_; licensed under the `GNU GPL version 3`_.
 
