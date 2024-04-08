@@ -16,11 +16,14 @@ jobs:
       matrix:
         pint-version:
         # Force specific version of pint
+        - "==0.11 'numpy < 1.23'"  # Earliest shown in pyproject.toml
         - "==0.17"
         - "==0.18"
         - "==0.19.1"
         # No change, i.e. latest
         - ""
+
+      fail-fast: false
 
     name: pint${{ matrix.pint-version }}
 
@@ -37,7 +40,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install .[tests]
-        # Force a specific version of pint
+        # Force a specific version of pint and perhaps other deps
         pip install pint${{ matrix.pint-version }}
 
     - name: Test
