@@ -3,6 +3,7 @@
 See the inline comments (NB) for possible extensions of this code; also
 iam_units.update.currency.
 """
+
 from typing import Union
 
 try:
