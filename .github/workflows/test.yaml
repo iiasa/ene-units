@@ -14,22 +14,26 @@ jobs:
 
     strategy:
       matrix:
-        pint-version:
+        version:
         # Force specific version of pint
-        - "==0.17"
-        - "==0.18"
-        - "==0.19.1"
+        # Earliest shown in pyproject.toml
+        - { python: "3.10", pint: "==0.11 'numpy < 1.23'" }
+        - { python: "3.x", pint: "==0.17" }
+        - { python: "3.x", pint: "==0.18" }
+        - { python: "3.x", pint: "==0.19.1" }
         # No change, i.e. latest
-        - ""
+        - { python: "3.x", pint: "" }
 
-    name: pint${{ matrix.pint-version }}
+      fail-fast: false
+
+    name: pint${{ matrix.version.pint }}
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
-    - uses: actions/setup-python@v4
+    - uses: actions/setup-python@v5
       with:
-        python-version: "3.x"
+        python-version: ${{ matrix.version.python }}
         cache: pip
         cache-dependency-path: "**/pyproject.toml"
 
@@ -37,8 +41,8 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install .[tests]
-        # Force a specific version of pint
-        pip install pint${{ matrix.pint-version }}
+        # Force a specific version of pint and perhaps other deps
+        pip install pint${{ matrix.version.pint }}
 
     - name: Test
       run: |
@@ -46,8 +50,15 @@ jobs:
           -rA -vv --color=yes \
           --cov=iam_units --cov-report=xml
 
+    - name: Test update code
+      run: |
+        # Analogous to "python -m iam_units.update …"
+        coverage run --append -m iam_units.update emissions || exit 0
+
     - name: Upload test coverage to Codecov.io
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@v4
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
 
   pre-commit:
     name: Code quality
@@ -55,10 +66,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-python@v4
+    - uses: actions/checkout@v4
+    - uses: actions/setup-python@v5
     - name: Force recreation of pre-commit virtual environment for mypy
       if: github.event_name == 'schedule'  # Comment this line to run on a PR
       run: gh cache delete $(gh cache list -L 999 | cut -f2 | grep pre-commit)
       env: { GH_TOKEN: "${{ github.token }}" }
-    - uses: pre-commit/action@v3.0.0
+    - uses: pre-commit/action@v3.0.1

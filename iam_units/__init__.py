@@ -16,8 +16,14 @@ __all__ = [
 ]
 
 
-# Package registry using definitions.txt
-registry = pint.UnitRegistry()
+try:
+    # Use a registry cache
+    registry = pint.UnitRegistry(cache_folder=":auto:")
+except TypeError:
+    # Pint <0.19; cache_folder argument is unavailable
+    registry = pint.UnitRegistry()
+
+# Load definitions.txt
 registry.load_definitions(str(Path(__file__).parent / "data" / "definitions.txt"))
 
 
