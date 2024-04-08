@@ -14,25 +14,26 @@ jobs:
 
     strategy:
       matrix:
-        pint-version:
+        version:
         # Force specific version of pint
-        - "==0.11 'numpy < 1.23'"  # Earliest shown in pyproject.toml
-        - "==0.17"
-        - "==0.18"
-        - "==0.19.1"
+        # Earliest shown in pyproject.toml
+        - { python: "3.10", pint: "==0.11 'numpy < 1.23'" }
+        - { python: "3.x", pint: "==0.17" }
+        - { python: "3.x", pint: "==0.18" }
+        - { python: "3.x", pint: "==0.19.1" }
         # No change, i.e. latest
-        - ""
+        - { python: "3.x", pint: "" }
 
       fail-fast: false
 
-    name: pint${{ matrix.pint-version }}
+    name: pint${{ matrix.version.pint }}
 
     steps:
     - uses: actions/checkout@v4
 
     - uses: actions/setup-python@v5
       with:
-        python-version: "3.x"
+        python-version: ${{ matrix.version.python }}
         cache: pip
         cache-dependency-path: "**/pyproject.toml"
 
@@ -41,7 +42,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install .[tests]
         # Force a specific version of pint and perhaps other deps
-        pip install pint${{ matrix.pint-version }}
+        pip install pint${{ matrix.version.pint }}
 
     - name: Test
       run: |
